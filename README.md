@@ -11,14 +11,19 @@
 ## 一、这里有什么
 
 ```
-build-libbox.sh                从 sing-box 官方源码编译 Libbox.xcframework 的脚本
-PacketTunnel/
-  PacketTunnelProvider.swift       Packet Tunnel 扩展入口（NetworkExtension）
-  ExtensionPlatformInterface.swift libbox 平台接口实现（TUN / DNS / 网络路径）
-  Extension+RunBlocking.swift      libbox 同步回调桥接
-LICENSE                         GPL-3.0 完整许可正文
-NOTICE.md                       第三方组件、版本、版权与署名
+build-libbox.sh                   从 sing-box 官方源码编译 Libbox.xcframework 的脚本
+
+PacketTunnelProvider.swift        Packet Tunnel 扩展入口（NetworkExtension）
+ExtensionPlatformInterface.swift  libbox 平台接口实现（TUN / DNS / 网络路径）
+Extension+RunBlocking.swift       libbox 同步回调桥接
+                                  以上三个文件同属 PacketTunnel 扩展 target
+
+LICENSE                           GPL-3.0 完整许可正文
+NOTICE.md                         第三方组件、版本、版权与署名
 ```
+
+> 这三个 Swift 文件在主工程中位于 `PacketTunnel/` 目录；本仓库为便于逐个查看，
+> 直接平铺在根目录。
 
 ### 网络内核
 
@@ -33,17 +38,39 @@ NOTICE.md                       第三方组件、版本、版权与署名
 | 版权 | Copyright (C) 2022 by nekohasekai `<contact-sagernet@sekai.icu>` |
 | 许可 | GPL-3.0-or-later（含一条附加的名称使用限制，见 `NOTICE.md`） |
 
-**重建方式**：克隆 sing-box 官方仓库，checkout 到 `v1.14.0`，执行 `./build-libbox.sh` 即可
-得到与 App 中完全一致的 `Libbox.xcframework`。因为内核源码未作任何修改，
-上游仓库本身即为该组件的对应源码。
+**重建方式**：
+
+```bash
+git clone https://github.com/SagerNet/sing-box.git
+cd sing-box
+git checkout v1.14.0        # tag commit 0b8995879f29a9b98ee027bc17b75e101445b238
+# 安装构建工具
+go install github.com/sagernet/gomobile/cmd/gobind@v0.1.12
+go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.12
+# 编译（脚本见本仓库 build-libbox.sh）
+./build-libbox.sh
+```
+
+产出即为 App 中静态链接的 `Libbox.xcframework`。
+**内核 Go 源码未作任何修改**，因此上游 `v1.14.0` 本身即为该组件的对应源码。
+
+> 说明：上述命令 `go run ./cmd/internal/build_libbox` 是 **sing-box 仓库自带的构建命令**，
+> 不属于任何第三方项目，因此重建内核**不需要** `sing-box-for-apple`。
 
 ### 参考实现
 
 `PacketTunnel/ExtensionPlatformInterface.swift` 在**结构上**参考了
-https://github.com/SagerNet/sing-box-for-apple （同为 GPL-3.0-or-later），
-但已按 `Libbox.xcframework` **v1.14.0** 实际生成的 `Libbox.objc.h` 接口契约重写。
+https://github.com/SagerNet/sing-box-for-apple （同为 GPL-3.0-or-later）。
+参考时的上游版本为：
 
-它与上游 HEAD（对应 sing-box alpha 分支）存在实质差异，例如：
+| 项 | 值 |
+|---|---|
+| 参考 commit | `91d9697bb21bd1d9571e991bde69f0f759924a68` |
+| 该 commit 版本号 | `1.15.0-alpha.3` |
+| 日期 | 2026-09-13 |
+
+本实现**没有**照抄该 commit 的 Swift 代码，而是按 `Libbox.xcframework`
+**v1.14.0** 实际生成的 `Libbox.objc.h` 接口契约重写。二者存在实质差异，例如：
 
 | 上游 HEAD（alpha） | 本实现（v1.14.0 实际契约） |
 |---|---|

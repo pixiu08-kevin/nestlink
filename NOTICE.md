@@ -5,6 +5,8 @@
 
 > GPL 组件的完整对应源码见本仓库（`PacketTunnel/` + `build-libbox.sh`），
 > 内核源码本身使用上游 `v1.14.0`，未作任何修改。
+>
+> 仓库地址：https://github.com/pixiu08-kevin/nestlink
 
 ---
 
@@ -32,7 +34,7 @@ sing-box 的 LICENSE 在 GPL-3.0 之外附加了一条约束：
 可以在"关于"页面中以客观陈述方式说明"本 App 使用 sing-box 作为网络内核"，
 并附上上游链接——这是署名，不是暗示关联。
 
-**当前 `ProxyClient` 是占位名，改名时请遵守以上约束。**
+**当前 `ProxyClient` 是主工程里的 target 名；对外品牌名为 `Nestlink`，改名时请遵守以上约束。**
 
 ---
 
