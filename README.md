@@ -6,6 +6,12 @@
 > **This repository contains the Corresponding Source for the GPL-licensed
 > components used by the Nestlink iOS app. It is not the full app.**
 
+| | |
+|---|---|
+| **仓库地址** | https://github.com/pixiu08-kevin/nestlink |
+| **对应应用** | Nestlink（iOS） |
+| **内核** | sing-box `v1.14.0`（未修改，静态链接） |
+
 ---
 
 ## 一、这里有什么
