@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 本程序包含以 GPL-3.0-or-later 授权的组件。其中 sing-box
 (https://github.com/SagerNet/sing-box) 的 v1.14.0 版本被静态链接为本应用的网络内核。
 这些 GPL 组件的完整对应源码可从此处获取：
-
+https://github.com/pixiu08-kevin/nestlink
     ⟨仓库地址待填⟩
 
 第三方组件、版本与署名见 NOTICE.md。
