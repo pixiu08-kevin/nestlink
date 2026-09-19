@@ -17,7 +17,7 @@ import os
 /// 其中第 5 步会回调 `ExtensionPlatformInterface.openTun`，由它建立
 /// NEPacketTunnelNetworkSettings 并把 TUN fd 交回 Go 侧。
 final class PacketTunnelProvider: NEPacketTunnelProvider {
-    private static let logger = Logger(subsystem: "com.neil.proxyclient", category: "PacketTunnelProvider")
+    private static let logger = Logger(subsystem: "REPLACE-ME.bundle-id", category: "PacketTunnelProvider")
 
     private var commandServer: LibboxCommandServer?
     private lazy var platformInterface = ExtensionPlatformInterface(self)
@@ -82,12 +82,11 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         commandServer = server
         try server.start()
 
-        // 把自己的 basePath 记下来，供 App 并排比对。
-        // 两边路径只要差一个字符，socket 就连不上，而这一点靠推断无法确认。
+        // App 与扩展必须用同一份共享目录：两边路径差一个字符，socket 就连不上。
         let extensionBasePath = AppConfiguration.sharedDirectory.path
         ExtensionDiagnostics.write(
             basePath: extensionBasePath,
-            socketPath: extensionBasePath + "/command.sock",
+            socketPath: extensionBasePath + "/command.sock",  // 内核命令通道，路径名保持中性
             socketExists: FileManager.default.fileExists(atPath: extensionBasePath + "/command.sock")
         )
 

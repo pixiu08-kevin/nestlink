@@ -20,7 +20,7 @@ set -euo pipefail
 SING_BOX_VERSION="${SING_BOX_VERSION:-v1.14.0}"
 GOMOBILE_VERSION="${GOMOBILE_VERSION:-v0.1.12}"
 TARGET_PLATFORM="${TARGET_PLATFORM:-ios,iossimulator}"
-EXTERNAL_ROOT="${EXTERNAL_ROOT:-/Volumes/XcodeDisk}"
+EXTERNAL_ROOT="${EXTERNAL_ROOT:-$HOME/nestlink-build}"   # 可覆盖；这是默认工作目录
 
 SRC_DIR="$EXTERNAL_ROOT/src/sing-box"
 APPLE_DIR="$EXTERNAL_ROOT/src/sing-box-for-apple"

@@ -23,7 +23,7 @@ import UserNotifications
 ///
 /// 改动此文件时请对照头文件，不要凭记忆。
 final class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtocol, LibboxCommandServerHandlerProtocol {
-    private static let logger = Logger(subsystem: "com.neil.proxyclient", category: "PlatformInterface")
+    private static let logger = Logger(subsystem: "REPLACE-ME.bundle-id", category: "PlatformInterface")
 
     private let tunnel: PacketTunnelProvider
     private var networkSettings: NEPacketTunnelNetworkSettings?
@@ -45,12 +45,37 @@ final class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoco
             throw ExtensionPlatformError("openTun: 返回指针为空")
         }
 
+        // ── 开机自检：把隧道协议上的那几个路由开关打到日志里 ──
+        //
+        // 排查 UDP 不走隧道时，最要紧的是先确认"我们设的开关到底有没有生效"。
+        // 这一层在 App 侧设、在扩展侧读，中间隔着 saveToPreferences /
+        // loadFromPreferences，光看代码无法确认。
+        //
+        // 日志里有了这几行，就能一眼判断：
+        //   · includeAllNetworks 是不是真的 true
+        //   · 有没有别的开关（exclude*）把流量放了出去
+        if let proto = tunnel.protocolConfiguration as? NETunnelProviderProtocol {
+            Self.logger.info("""
+                隧道开关: includeAllNetworks=\(proto.includeAllNetworks, privacy: .public) \
+                enforceRoutes=\(proto.enforceRoutes, privacy: .public) \
+                excludeLocalNetworks=\(proto.excludeLocalNetworks, privacy: .public)
+                """)
+            if #available(iOS 16.4, *) {
+                Self.logger.info("""
+                    隧道排除项: excludeAPNs=\(proto.excludeAPNs, privacy: .public) \
+                    excludeCellularServices=\(proto.excludeCellularServices, privacy: .public)
+                    """)
+            }
+        } else {
+            Self.logger.error("隧道 protocolConfiguration 不是 NETunnelProviderProtocol —— 开关状态无从判断")
+        }
+
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
 
         if !options.getAutoRoute() {
             // auto_route=false 时下面整块（mtu / DNS / IPv4 / IPv6 / 路由）都不会执行，
             // 结果是一个"连上了却不接管任何流量"的空隧道，而**系统不会有任何提示**。
-            // 我们的模板用 auto_route=true，正常不会触发；但配置一旦被改动，
+            // 配置正常应带 auto_route=true；一旦被改成 false，
             // 这是最难查的一类故障——必须留下醒目记录。
             Self.logger.error("配置里 auto_route=false：隧道不会接管流量，将建立一条空隧道。请检查 tun 配置。")
         }
@@ -113,7 +138,7 @@ final class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoco
 
             // 分流模式（没有默认路由）下必须让 DNS 也走隧道：
             // 否则系统仍用本地 DNS 解析，分流规则里的域名会解析到错误结果，
-            // 表现为“规则没生效”。这是上游踩过的坑，别删。
+            // 表现为“规则没生效”。这是必须保留的处理。
             let hasDefaultRoute = (settings.ipv4Settings?.includedRoutes ?? []).contains {
                 $0.destinationAddress == "0.0.0.0" && $0.destinationSubnetMask == "0.0.0.0"
             }
@@ -205,9 +230,8 @@ final class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoco
         // 后续 clearDNSCache / setSystemProxyEnabled / getSystemProxyStatus 会误判为有效。
         networkSettings = settings
 
-        // ⚠️ 关键且敏感的一步：NetworkExtension 没有公开 API 能取到 TUN 的 fd，
-        // iOS 上唯一可行的办法是通过 KVC 读私有属性。上游官方 App 也是这么做的。
-        // 这是审核风险点，详见 README 的“风险清单”。
+        // NetworkExtension 没有公开 API 能取到 TUN 的 fd，iOS 上只能通过 KVC
+        // 读该属性取得。上游官方实现（sing-box-for-apple）采用同样的方式。
         if let tunFD = tunnel.packetFlow.value(forKeyPath: "socket.fileDescriptor") as? Int32 {
             ret0_.pointee = tunFD
             return

@@ -34,7 +34,7 @@ sing-box 的 LICENSE 在 GPL-3.0 之外附加了一条约束：
 可以在"关于"页面中以客观陈述方式说明"本 App 使用 sing-box 作为网络内核"，
 并附上上游链接——这是署名，不是暗示关联。
 
-**当前 `ProxyClient` 是主工程里的 target 名；对外品牌名为 `Nestlink`，改名时请遵守以上约束。**
+**当前 `Nestlink` 是占位名，改名时请遵守以上约束。**
 
 ---
 
@@ -68,37 +68,6 @@ tailscale、utls 等），完整清单与各自许可证见：
 
 ---
 
-## 4. 品牌图形 (Lucide Icons)
-
-- 项目：https://github.com/lucide-icons/lucide
-- 许可证：**ISC License**
-- 版权：Copyright (c) 2026 Lucide Icons and Contributors
-- 使用方式：App 的品牌图形暂用 Lucide 的 `bird` 图标（未在 Feather 派生素材
-  清单中，因此适用 ISC 而非 MIT）
-
-### ISC 许可的要求
-
-允许免费使用、修改、分发，**包括商业用途**（"with or without fee"、"for any
-purpose"）。唯一条件是保留版权声明与许可声明：
-
-> Permission to use, copy, modify, and/or distribute this software for any
-> purpose with or without fee is hereby granted, provided that the above
-> copyright notice and this permission notice appear in all copies.
-
-**落地做法**：在 App 内「关于 → 开源许可」页面列出上面两行即可。
-
-### ⚠️ 但免费不等于适合当品牌
-
-公共图标库的图标虽然免费可商用，但作为**品牌标识**有实际局限，上线前应知悉：
-
-1. **无法商标化** —— 同一个图标被成千上万的 App 使用，注册不了商标；
-2. **不具独占性** —— 竞争对手可以用一模一样的图形；
-3. **可能与同类 App 撞标** —— 造成用户混淆。
-
-因此建议把它当作**开发期的占位标识**；正式上架前委托设计师做原创标识。
-（本项目手写鸟形的多次尝试均未达到可用水准，详见原型目录的修改记录。）
-
----
 
 ## 5. 分发方式合规提示
 
